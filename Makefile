@@ -167,6 +167,17 @@ qemu-gdb: $K/kernel .gdbinit fs.img
 	@echo "*** Now run 'gdb' in another window." 1>&2
 	$(QEMU) $(QEMUOPTS) -S $(QEMUGDB)
 
+XV6_NEMU_BIN = $(abspath builld/xv6-nemu.bin)
+
+$(XV6_NEMU_BIN): $K/kernel
+	mkdir -p $(@D)
+	$(OBJDUMP) -d $< > build/code.txt
+	$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $< $@
+
+NEMU_ARGS = -b $(MAINARGS) --log=$(abspath build/nemu-log.txt) $(XV6_NEMU_BIN)
+nemu: $(XV6_NEMU_BIN)
+	$(MAKE) -C $(NEMU_HOME) ISA=riscv64 run ARGS="$(NEMU_ARGS)"
+
 # CUT HERE
 # prepare dist for students
 # after running make dist, probably want to
