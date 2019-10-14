@@ -57,9 +57,9 @@ void            stati(struct inode*, struct stat*);
 int             writei(struct inode*, int, uint64, uint, uint);
 
 // ramdisk.c
-void            ramdiskinit(void);
-void            ramdiskintr(void);
-void            ramdiskrw(struct buf*);
+void            ramdisk_init(void);
+void            ramdisk_intr(void);
+void            ramdisk_rw(struct buf*, int);
 
 // kalloc.c
 void*           kalloc(void);
