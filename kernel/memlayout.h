@@ -18,7 +18,11 @@
 // PHYSTOP -- end RAM used by the kernel
 
 // qemu puts UART registers here in physical memory.
+#ifdef __NEMU__
+#define UART0 0xa10003f8L
+#else
 #define UART0 0x10000000L
+#endif
 #define UART0_IRQ 10
 
 // virtio mmio interface
