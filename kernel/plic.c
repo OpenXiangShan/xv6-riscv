@@ -8,6 +8,7 @@
 // the riscv Platform Level Interrupt Controller (PLIC).
 //
 
+#ifndef __NEMU__
 void
 plicinit(void)
 {
@@ -60,3 +61,10 @@ plic_complete(int irq)
   //*(uint32*)(PLIC + 0x201004) = irq;
   *(uint32*)PLIC_SCLAIM(hart) = irq;
 }
+#else
+void plicinit(void) { }
+void plicinithart(void) { }
+uint64 plic_pending(void) { return 0; }
+int plic_claim(void) { return 0; }
+void plic_complete(int irq) { }
+#endif
