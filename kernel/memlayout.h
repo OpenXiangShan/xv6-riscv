@@ -18,7 +18,11 @@
 // PHYSTOP -- end RAM used by the kernel
 
 // qemu puts UART registers here in physical memory.
+#ifdef __NEMU__
+#define UART0 0xa10003f8L
+#else
 #define UART0 0x10000000L
+#endif
 #define UART0_IRQ 10
 
 // virtio mmio interface
@@ -26,7 +30,12 @@
 #define VIRTIO0_IRQ 1
 
 // local interrupt controller, which contains the timer.
+#ifdef __NEMU__
+#define CLINT 0xa2000000L
+#else
 #define CLINT 0x2000000L
+#endif
+
 #define CLINT_MTIMECMP(hartid) (CLINT + 0x4000 + 8*(hartid))
 #define CLINT_MTIME (CLINT + 0xBFF8) // cycles since boot.
 
@@ -45,7 +54,11 @@
 // for use by the kernel and user pages
 // from physical address 0x80000000 to PHYSTOP.
 #define KERNBASE 0x80000000L
+#ifdef __NEMU__
+#define PHYSTOP (KERNBASE + 8*1024*1024)
+#else
 #define PHYSTOP (KERNBASE + 128*1024*1024)
+#endif
 
 // map the trampoline page to the highest address,
 // in both user and kernel space.

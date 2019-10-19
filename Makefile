@@ -28,6 +28,8 @@ OBJS = \
   $K/sysfile.o \
   $K/kernelvec.o \
   $K/plic.o \
+  $K/ramdisk.o \
+  $K/initrd.o \
   $K/virtio_disk.o
 
 # riscv64-unknown-elf- or riscv64-linux-gnu-
@@ -61,6 +63,10 @@ CFLAGS += -ffreestanding -fno-common -nostdlib -mno-relax
 CFLAGS += -I.
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 
+ifeq ($(MAKECMDGOALS),nemu)
+CFLAGS += -D__NEMU__
+endif
+
 # Disable PIE when possible (for Ubuntu 16.10 toolchain)
 ifneq ($(shell $(CC) -dumpspecs 2>/dev/null | grep -e '[^f]no-pie'),)
 CFLAGS += -fno-pie -no-pie
@@ -70,6 +76,8 @@ CFLAGS += -fno-pie -nopie
 endif
 
 LDFLAGS = -z max-page-size=4096
+
+$K/initrd.o: fs.img
 
 $K/kernel: $(OBJS) $K/kernel.ld $U/initcode
 	$(LD) $(LDFLAGS) -T $K/kernel.ld -o $K/kernel $(OBJS) 
@@ -157,7 +165,7 @@ QEMUEXTRA = -drive file=fs1.img,if=none,format=raw,id=x1 -device virtio-blk-devi
 QEMUOPTS = -machine virt -bios none -kernel $K/kernel -m 3G -smp $(CPUS) -nographic
 QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0 -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
-qemu: $K/kernel fs.img
+qemu: $K/kernel
 	$(QEMU) $(QEMUOPTS)
 
 .gdbinit: .gdbinit.tmpl-riscv
@@ -166,6 +174,17 @@ qemu: $K/kernel fs.img
 qemu-gdb: $K/kernel .gdbinit fs.img
 	@echo "*** Now run 'gdb' in another window." 1>&2
 	$(QEMU) $(QEMUOPTS) -S $(QEMUGDB)
+
+XV6_NEMU_BIN = $(abspath build/xv6-nemu.bin)
+
+$(XV6_NEMU_BIN): $K/kernel
+	mkdir -p $(@D)
+	$(OBJDUMP) -d $< > build/code.txt
+	$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $< $@
+
+NEMU_ARGS = -b $(MAINARGS) --log=$(abspath build/nemu-log.txt) $(XV6_NEMU_BIN)
+nemu: $(XV6_NEMU_BIN)
+	$(MAKE) -C $(NEMU_HOME) ISA=riscv64 run ARGS="$(NEMU_ARGS)"
 
 # CUT HERE
 # prepare dist for students

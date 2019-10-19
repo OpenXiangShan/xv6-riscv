@@ -196,4 +196,10 @@ consoleinit(void)
   // to consoleread and consolewrite.
   devsw[CONSOLE].read = consoleread;
   devsw[CONSOLE].write = consolewrite;
+
+  char cmd[128] = "ls\nstressfs\nforktest\nusertests\n";
+  int i;
+  for (i = 0; i < strlen(cmd); i ++) {
+    consoleintr(cmd[i]);
+  }
 }

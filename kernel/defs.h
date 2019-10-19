@@ -1,3 +1,6 @@
+#define Log(format, ...) \
+  printf("\33[1;34m[%s,%d,%s] " format "\33[0m\n", __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+
 struct buf;
 struct context;
 struct file;
@@ -54,9 +57,9 @@ void            stati(struct inode*, struct stat*);
 int             writei(struct inode*, int, uint64, uint, uint);
 
 // ramdisk.c
-void            ramdiskinit(void);
-void            ramdiskintr(void);
-void            ramdiskrw(struct buf*);
+void            ramdisk_init(void);
+void            ramdisk_intr(void);
+void            ramdisk_rw(struct buf*, int);
 
 // kalloc.c
 void*           kalloc(void);
