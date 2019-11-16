@@ -30,6 +30,8 @@
 #define ReadReg(reg) (*(Reg(reg)))
 #define WriteReg(reg, v) (*(Reg(reg)) = (v))
 
+#ifndef __NOOP__
+
 void
 uartinit(void)
 {
@@ -78,6 +80,31 @@ uartgetc(void)
     return -1;
   }
 }
+
+#else
+
+#define RX_FIFO 0x0
+#define TX_FIFO 0x4
+#define STAT_REG 0x8
+
+void uartinit(void) { }
+
+void uartputc(int c) {
+  while (ReadReg(STAT_REG) & 0x8);
+  WriteReg(TX_FIFO, c);
+  if (c == '\n') uartputc('\r');
+}
+
+int uartgetc(void) {
+  if (ReadReg(STAT_REG) & 0x01) {
+    // input data is ready.
+    return ReadReg(RX_FIFO);
+  } else {
+    return -1;
+  }
+}
+
+#endif
 
 // trap.c calls here when the uart interrupts.
 void

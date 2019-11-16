@@ -59,7 +59,7 @@ timerinit()
   int id = r_mhartid();
 
   // ask the CLINT for a timer interrupt.
-#ifdef __NEMU__
+#if defined(__NEMU__) || defined(__NOOP__)
   int interval = 0x800;
 #else
   int interval = 1000000; // cycles; about 1/10th second in qemu.

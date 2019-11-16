@@ -39,7 +39,7 @@ main()
     Log();
     fileinit();      // file table
     Log();
-#ifdef __NEMU__
+#if defined(__NEMU__) || defined(__NOOP__)
     ramdisk_init();
 #else
     virtio_disk_init(); // emulated hard disk
