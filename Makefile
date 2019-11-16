@@ -65,6 +65,8 @@ CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 &
 
 ifeq ($(MAKECMDGOALS),nemu)
 CFLAGS += -D__NEMU__
+else ifeq ($(MAKECMDGOALS),noop)
+CFLAGS += -D__NOOP__
 endif
 
 # Disable PIE when possible (for Ubuntu 16.10 toolchain)
@@ -175,16 +177,19 @@ qemu-gdb: $K/kernel .gdbinit fs.img
 	@echo "*** Now run 'gdb' in another window." 1>&2
 	$(QEMU) $(QEMUOPTS) -S $(QEMUGDB)
 
-XV6_NEMU_BIN = $(abspath build/xv6-nemu.bin)
+XV6_BIN = $(abspath build/xv6.bin)
 
-$(XV6_NEMU_BIN): $K/kernel
+$(XV6_BIN): $K/kernel
 	mkdir -p $(@D)
 	$(OBJDUMP) -d $< > build/code.txt
 	$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $< $@
 
-NEMU_ARGS = -b $(MAINARGS) --log=$(abspath build/nemu-log.txt) $(XV6_NEMU_BIN)
-nemu: $(XV6_NEMU_BIN)
+NEMU_ARGS = --log=$(abspath build/nemu-log.txt) $(XV6_BIN)
+nemu: $(XV6_BIN)
 	$(MAKE) -C $(NEMU_HOME) ISA=riscv64 run ARGS="$(NEMU_ARGS)"
+
+noop: $(XV6_BIN)
+	$(MAKE) -C $(NOOP_HOME) emu IMAGE="$(XV6_BIN)"
 
 # CUT HERE
 # prepare dist for students

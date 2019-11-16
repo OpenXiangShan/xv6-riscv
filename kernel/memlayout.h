@@ -17,27 +17,33 @@
 // end -- start of kernel page allocation area
 // PHYSTOP -- end RAM used by the kernel
 
-// qemu puts UART registers here in physical memory.
-#ifdef __NEMU__
-#define UART0 0xa10003f8L
+#if defined(__NEMU__)
+# define UART0 0xa10003f8L
+# define CLINT 0xa2000000L
+#elif defined(__NOOP__)
+# define UART0 0x40600000L
+# define CLINT 0x40700000L
 #else
-#define UART0 0x10000000L
+// qemu
+// qemu puts UART registers here in physical memory.
+# define UART0 0x10000000L
+// local interrupt controller, which contains the timer.
+# define CLINT 0x2000000L
 #endif
+
 #define UART0_IRQ 10
 
 // virtio mmio interface
 #define VIRTIO0 0x10001000
 #define VIRTIO0_IRQ 1
 
-// local interrupt controller, which contains the timer.
-#ifdef __NEMU__
-#define CLINT 0xa2000000L
+#ifdef __NOOP__
+#define CLINT_MTIMECMP(hartid) (CLINT + 0x8)
+#define CLINT_MTIME (CLINT + 0x0) // cycles since boot.
 #else
-#define CLINT 0x2000000L
-#endif
-
 #define CLINT_MTIMECMP(hartid) (CLINT + 0x4000 + 8*(hartid))
 #define CLINT_MTIME (CLINT + 0xBFF8) // cycles since boot.
+#endif
 
 // qemu puts programmable interrupt controller here.
 #define PLIC 0x0c000000L
@@ -54,7 +60,7 @@
 // for use by the kernel and user pages
 // from physical address 0x80000000 to PHYSTOP.
 #define KERNBASE 0x80000000L
-#ifdef __NEMU__
+#if defined(__NEMU__) || defined(__NOOP__)
 #define PHYSTOP (KERNBASE + 8*1024*1024)
 #else
 #define PHYSTOP (KERNBASE + 128*1024*1024)

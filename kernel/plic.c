@@ -8,7 +8,7 @@
 // the riscv Platform Level Interrupt Controller (PLIC).
 //
 
-#ifndef __NEMU__
+#if !defined(__NEMU__) && !defined(__NOOP__)
 void
 plicinit(void)
 {
