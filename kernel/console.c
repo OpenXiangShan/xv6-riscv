@@ -197,7 +197,7 @@ consoleinit(void)
   devsw[CONSOLE].read = consoleread;
   devsw[CONSOLE].write = consolewrite;
 
-  char cmd[128] = "ls\nstressfs\nforktest\nusertests\n";
+  char cmd[128] = "echo 111\necho 222\nls\nstressfs\nforktest\nusertests\n";
   int i;
   for (i = 0; i < strlen(cmd); i ++) {
     consoleintr(cmd[i]);
