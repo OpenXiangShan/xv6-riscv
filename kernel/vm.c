@@ -334,6 +334,7 @@ uvmcopy(pagetable_t old, pagetable_t new, uint64 sz)
       goto err;
     }
   }
+  asm volatile("fence.i");
   return 0;
 
  err:
