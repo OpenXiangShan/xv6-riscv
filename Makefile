@@ -65,8 +65,8 @@ CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 &
 
 ifeq ($(MAKECMDGOALS),nemu)
 CFLAGS += -D__NEMU__
-else ifeq ($(MAKECMDGOALS),noop)
-CFLAGS += -D__NOOP__
+else ifeq ($(MAKECMDGOALS),nutshell)
+CFLAGS += -D__NUTSHELL__
 endif
 
 # Disable PIE when possible (for Ubuntu 16.10 toolchain)
@@ -188,8 +188,8 @@ NEMU_ARGS = --log=$(abspath build/nemu-log.txt) $(XV6_BIN)
 nemu: $(XV6_BIN)
 	$(MAKE) -C $(NEMU_HOME) ISA=riscv64 run ARGS="$(NEMU_ARGS)"
 
-noop: $(XV6_BIN)
-	$(MAKE) -C $(NOOP_HOME) emu IMAGE="$(XV6_BIN)"
+nutshell: $(XV6_BIN)
+	$(MAKE) -C $(NUTSHELL_HOME) emu IMAGE="$(XV6_BIN)"
 
 # CUT HERE
 # prepare dist for students

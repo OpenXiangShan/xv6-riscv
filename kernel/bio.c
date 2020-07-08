@@ -94,7 +94,7 @@ bread(uint dev, uint blockno)
 
   b = bget(dev, blockno);
   if(!b->valid) {
-#if defined(__NEMU__) || defined(__NOOP__)
+#if defined(__NEMU__) || defined(__NUTSHELL__)
     ramdisk_rw(b, 0);
 #else
     virtio_disk_rw(b, 0);
@@ -110,7 +110,7 @@ bwrite(struct buf *b)
 {
   if(!holdingsleep(&b->lock))
     panic("bwrite");
-#if defined(__NEMU__) || defined(__NOOP__)
+#if defined(__NEMU__) || defined(__NUTSHELL__)
   ramdisk_rw(b, 1);
 #else
   virtio_disk_rw(b, 1);
