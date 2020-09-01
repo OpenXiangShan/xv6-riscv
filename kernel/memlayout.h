@@ -22,7 +22,8 @@
 # define CLINT 0xa2000000L
 #elif defined(__NUTSHELL__)
 # define UART0 0x40600000L
-# define CLINT 0x40700000L
+// # define CLINT 0x40700000L
+# define CLINT 0x38000000L
 #else
 // qemu
 // qemu puts UART registers here in physical memory.
@@ -37,13 +38,13 @@
 #define VIRTIO0 0x10001000
 #define VIRTIO0_IRQ 1
 
-#ifdef __NUTSHELL__
-#define CLINT_MTIMECMP(hartid) (CLINT + 0x8)
-#define CLINT_MTIME (CLINT + 0x0) // cycles since boot.
-#else
+// #ifdef __NUTSHELL__
+// #define CLINT_MTIMECMP(hartid) (CLINT + 0x8)
+// #define CLINT_MTIME (CLINT + 0x0) // cycles since boot.
+// #else
 #define CLINT_MTIMECMP(hartid) (CLINT + 0x4000 + 8*(hartid))
 #define CLINT_MTIME (CLINT + 0xBFF8) // cycles since boot.
-#endif
+// #endif
 
 // qemu puts programmable interrupt controller here.
 #define PLIC 0x0c000000L
