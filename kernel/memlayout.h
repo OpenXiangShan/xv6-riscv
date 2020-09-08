@@ -20,7 +20,7 @@
 #if defined(__NEMU__)
 # define UART0 0xa10003f8L
 # define CLINT 0xa2000000L
-#elif defined(__NUTSHELL__)
+#elif defined(__XIANGSHAN__)
 # define UART0 0x40600000L
 // # define CLINT 0x40700000L
 # define CLINT 0x38000000L
@@ -38,7 +38,7 @@
 #define VIRTIO0 0x10001000
 #define VIRTIO0_IRQ 1
 
-// #ifdef __NUTSHELL__
+// #ifdef __XIANGSHAN__
 // #define CLINT_MTIMECMP(hartid) (CLINT + 0x8)
 // #define CLINT_MTIME (CLINT + 0x0) // cycles since boot.
 // #else
@@ -61,7 +61,7 @@
 // for use by the kernel and user pages
 // from physical address 0x80000000 to PHYSTOP.
 #define KERNBASE 0x80000000L
-#if defined(__NEMU__) || defined(__NUTSHELL__)
+#if defined(__NEMU__) || defined(__XIANGSHAN__)
 #define PHYSTOP (KERNBASE + 8*1024*1024)
 #else
 #define PHYSTOP (KERNBASE + 128*1024*1024)

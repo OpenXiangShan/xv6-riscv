@@ -30,7 +30,7 @@
 #define ReadReg(reg) (*(Reg(reg)))
 #define WriteReg(reg, v) (*(Reg(reg)) = (v))
 
-#ifndef __NUTSHELL__
+#ifndef __XIANGSHAN__
 
 void
 uartinit(void)
